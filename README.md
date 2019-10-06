@@ -41,7 +41,7 @@ Then [define required JIRA variables](#Required)
 Put `$JIRA_USER:$JIRA_PASS` into `~/.jira-credentials`
 
 ```shell
-echo "user:pass" > `~/.jira-credentials`
+echo "user:pass" > ~/.jira-credentials
 ```
 
 Define `JIRA_API_URL` in your `.zshrc` (or `.bashrc`)
@@ -61,7 +61,7 @@ Type `jco` in your Git-repository to checkout between branches
 You can specify a custom `JIRA_CREDENTIALS_PATH` in your `.zshrc` (or `.bashrc`)
 
 ```shell
-echo -e "JIRA_CREDENTIALS_PATH=https://jira.mysite.com/rest/api/2/" >> ~/.zshrc
+echo -e "JIRA_CREDENTIALS_PATH=~/.jira-credentials" >> ~/.zshrc
 ```
 
 ## Dependencies
