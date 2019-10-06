@@ -4,13 +4,15 @@ jco() {
 
   JIRA_CREDENTIALS_PATH=${JIRA_CREDENTIALS_PATH:-~/.jira-credentials}
 
-  local JIRA_ISSUES_CACHE_PATH=/tmp/.jira_issues.cache
+  [ "$(git symbolic-ref --short HEAD)" ] || return
+
+  local GIT_REPOSITORY_HASH=$(git remote -v | shasum -p | cut -d' ' -f1)
+
+  local JIRA_ISSUES_CACHE_PATH=/tmp/.jira_issues.$GIT_REPOSITORY_HASH.cache
   local JIRA_ISSUES_CACHE_TTL=60
-  local JIRA_BRANCHES_CACHE_PATH=/tmp/.jira_branches.cache
+  local JIRA_BRANCHES_CACHE_PATH=/tmp/.jira_branches.$GIT_REPOSITORY_HASH.cache
   local JIRA_BRANCHES_CACHE_TTL=60
   local JIRA_CREDENTIALS
-
-  [ "$(git symbolic-ref --short HEAD)" ] || return
 
   [ -f "$JIRA_CREDENTIALS_PATH" ] && [ -z $JIRA_CREDENTIALS ] && JIRA_CREDENTIALS=$(cat "$JIRA_CREDENTIALS_PATH" | xargs)
   [ -z $JIRA_CREDENTIALS ] && echo 'Put "$JIRA_USER:$JIRA_PASS" into '$JIRA_CREDENTIALS_PATH && return
