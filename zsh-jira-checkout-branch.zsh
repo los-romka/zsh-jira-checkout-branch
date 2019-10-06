@@ -97,7 +97,8 @@ jco() {
   local target=$(
     (echo "$branches";) |
     fzf --no-hscroll --no-multi \
-        --ansi --preview="git --no-pager log -150 --pretty=format:%s '..{1}'") || return
+        --preview-window up:10 \
+        --ansi --preview="git --no-pager log -10 --pretty=format:%s '..{1}'") || return
 
   git checkout $(awk '{print $1}' <<<"$target" | sed 's/origin\///g' )
 }
