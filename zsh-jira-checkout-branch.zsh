@@ -35,7 +35,12 @@ jco() {
     [ -f "$CACHE_FILE" ] && (( $(du -k "$CACHE_FILE" | cut -f1) > 10 )) && cat "$CACHE_FILE" && return
 
     local issueKeys=$(git_branches | sed 's/origin\///g' | cut -d"|" -f1 | grep --color=never -iE '^[A-Z]+-[0-9]+$' ) || return
-    local maxResults=$(echo $issueKeys | wc -l)
+    local maxResults=$(echo $issueKeys | wc -l | xargs)
+
+    if [ "$issueKeys" = "" ]; then
+      >&2 echo "There aren't git branches associated with JIRA!"
+      return
+    fi
 
     local searchUrl=$(echo "${JIRA_API_URL}search?fields=summary&maxResults=${maxResults}&jql=issueKey%20in%20($(echo -e $issueKeys | xargs | tr ' ' ','))") || return
     local issues=$(curl --fail -L -u "$JIRA_CREDENTIALS" "$searchUrl" | jq -r '.issues | map(.key + "|" + .fields.summary) | join("\n")') || return
