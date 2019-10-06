@@ -45,6 +45,9 @@ jco() {
     fi
 
     local searchUrl=$(echo "${JIRA_API_URL}search?fields=summary&maxResults=${maxResults}&jql=issueKey%20in%20($(echo -e $issueKeys | xargs | tr ' ' ','))") || return
+
+    >&2 echo "Requesting JIRA issues: $searchUrl"
+
     local issues=$(curl --fail -L -u "$JIRA_CREDENTIALS" "$searchUrl" | jq -r '.issues | map(.key + "|" + .fields.summary) | join("\n")') || return
 
     echo "$issues" > "$CACHE_FILE"
