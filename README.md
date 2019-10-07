@@ -69,6 +69,8 @@ echo -e "JIRA_CREDENTIALS_PATH=~/.jira-credentials" >> ~/.zshrc
 - [`JIRA-server`](https://www.atlassian.com/software/jira) - The #1 software development tool used by agile teams
 - [`git`](https://www.git-scm.com/) - U know it
 - [`fzf`](https://github.com/junegunn/fzf) - General-purpose command-line fuzzy finder.
+- [`curl`](https://curl.haxx.se/) - Command line tool and library for transferring data with URLs
+- [`jq`](https://stedolan.github.io/jq/) - Command-line JSON processor
 
 ## License
 
