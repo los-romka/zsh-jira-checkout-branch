@@ -24,7 +24,7 @@ jco() {
             --sort=-committerdate \
             --format='%(refname:short)|%(committerdate:relative)|%(authorname)' \
             --color=always \
-          | grep --color=never -vE "$(git --no-pager branch --format='%(refname:short)' | sed 's/^/origin\//g' | xargs | tr ' ' '|')" \
+          | grep -a --color=never -vE "$(git --no-pager branch --format='%(refname:short)' | sed 's/^/origin\//g' | xargs | tr ' ' '|')" \
           | sed '/^$/d'
     )
     echo "$branches"
@@ -36,7 +36,7 @@ jco() {
     [ -f "$CACHE_FILE" ] && find "$CACHE_FILE" -type f -mmin +"$JIRA_ISSUES_CACHE_TTL" -print0 | xargs -0 rm -f
     [ -f "$CACHE_FILE" ] && (( $(du -k "$CACHE_FILE" | cut -f1) > 10 )) && cat "$CACHE_FILE" && return
 
-    local issueKeys=$(git_branches | sed 's/origin\///g' | cut -d"|" -f1 | grep --color=never -iE '^[A-Z]+-[0-9]+$' ) || return
+    local issueKeys=$(git_branches | sed 's/origin\///g' | cut -d"|" -f1 | grep -a --color=never -iE '^[A-Z]+-[0-9]+$' ) || return
     local maxResults=$(echo $issueKeys | wc -l | xargs)
 
     if [ "$issueKeys" = "" ]; then
@@ -69,7 +69,7 @@ jco() {
     local choices=$(
       echo "$branches" | while read branchInfo ; do
         local branch=$(echo $branchInfo | cut -d"|" -f1)
-        local issueInfo=$(echo $issues | grep --color=never -iE $(echo "^$branch" | sed 's/origin\///g' ) )
+        local issueInfo=$(echo $issues | grep -a --color=never -iE $(echo "^$branch" | sed 's/origin\///g' ) )
 
         if [ "$issueInfo" != '' ]; then
           local title=$(echo $issueInfo | cut -d"|" -f2-)
