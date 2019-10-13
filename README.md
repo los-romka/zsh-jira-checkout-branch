@@ -52,7 +52,7 @@ echo -e "JIRA_API_URL=https://jira.mysite.com/rest/api/2/" >> ~/.zshrc
 
 ## Usage
 
-Type `jco` in your Git-repository to checkout between branches
+Just type `jco` in your Git-repository to checkout between branches (`fzf` included)
 
 ## Options
 
