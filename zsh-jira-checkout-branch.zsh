@@ -31,12 +31,12 @@ jco() {
     local CACHE_FILE="$JIRA_ISSUES_CACHE_PATH"
 
     [ -f "$CACHE_FILE" ] && find "$CACHE_FILE" -type f -mmin +"$JIRA_ISSUES_CACHE_TTL" -print0 | xargs -0 rm -f
-    [ -f "$CACHE_FILE" ] && (( $(du -k "$CACHE_FILE" | cut -f1) > 10 )) && cat "$CACHE_FILE" && return
+    [ -f "$CACHE_FILE" ] && (( $(du -k "$CACHE_FILE" | cut -f1) > 3 )) && cat "$CACHE_FILE" && return
 
     local issueKeys maxResults searchUrl issues
 
     issueKeys=$(git_branches | sed 's/origin\///g' | cut -d"|" -f1 | grep -a --color=never -iE '^[A-Z]+-[0-9]+$' ) || return
-    maxResults=$(echo "$issueKeys" | wc -l | xargs -0)
+    maxResults=$(echo "$issueKeys" | wc -l | xargs)
 
     if [ "$issueKeys" = "" ]; then
       >&2 echo "There aren't git branches associated with JIRA!"
@@ -70,9 +70,9 @@ jco() {
         author=$(echo "$choice" | cut -d"|" -f3)
         title=${issues["$branchName"]}
 
-        printf "$(tput setaf 3)%-35s%15s$(tput setaf 5)%-25s%15s$(tput setaf 2)%-20s%15s$(tput sgr0)%s\n" \
-            "$branch" " " "$author" " " "$timeAgo" " " "$title"
-      done
+        printf "$(tput setaf 3)%-35s $(tput setaf 5)%-25s $(tput setaf 2)%-20s $(tput sgr0)%s\n" \
+            "$branch" "$author" "$timeAgo" "$title"
+    done
   }
 
   local target=$(
