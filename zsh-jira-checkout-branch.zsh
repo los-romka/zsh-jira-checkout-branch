@@ -78,6 +78,26 @@ _zsh_jira_checkout_branch_add_jira_titles() {
     done
 }
 
+_zsh_jira_checkout_branch_add_jira_titles_only() {
+    local issues branch timeAgo author title branchName
+
+    declare -A issues
+
+    _zsh_jira_checkout_branch_jira_issues | while read issueInfo ; do
+        branch=$(echo "$issueInfo" | cut -d"|" -f1)
+        issues["$branch"]=$(echo "$issueInfo" | cut -d"|" -f2-)
+    done
+
+    while read choice; do
+        branch=$(echo "$choice" | cut -d"|" -f1)
+        branchName=$(echo "$branch" | sed 's/origin\///g')
+        title=${issues["$branchName"]}
+
+        printf "$(tput setaf 3)%s $(tput sgr0)%s\n" \
+            "$branch" "$title"
+    done
+}
+
 jco() {
   local _JIRA_ISSUES_CACHE_PATH
   local _JIRA_ISSUES_CACHE_TTL
@@ -93,6 +113,22 @@ jco() {
         --ansi --preview="git --no-pager log -10 --pretty=format:%s '..{1}'") || return
 
   git checkout $(awk '{print $1}' <<<"$target" | sed 's/origin\///g' )
+}
+
+jb() {
+  local _JIRA_ISSUES_CACHE_PATH
+  local _JIRA_ISSUES_CACHE_TTL
+  local _JIRA_CREDENTIALS
+
+  _zsh_jira_checkout_branch_init || return
+
+  git --no-pager branch \
+    --sort=-committerdate \
+    --format='%(refname:short)|%(committerdate:relative)|%(authorname)' \
+    --color=always \
+  | grep -vE '(master|develop)' \
+  | grep -a --color=never -vE "$(git --no-pager branch --format='%(refname:short)' | sed 's/^/origin\//g' | xargs | tr ' ' '|')" \
+  | sed '/^$/d' | _zsh_jira_checkout_branch_add_jira_titles_only
 }
 
 # Set $?.
