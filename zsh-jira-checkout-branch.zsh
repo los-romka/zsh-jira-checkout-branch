@@ -50,10 +50,9 @@ _zsh_jira_checkout_branch_jira_issues() {
 
     >&2 echo "Requesting JIRA issues"
 
-    issues=$(curl --fail -L -u "$_JIRA_CREDENTIALS" "$searchUrl" | jq -r '.issues | map(.key + "|" + .fields.summary) | join("\n")') || return
+    curl --fail -L -u "$_JIRA_CREDENTIALS" "$searchUrl" | jq -r '.issues | map(.key + "|" + .fields.summary) | join("\n")' > "$CACHE_FILE" || return
 
-    echo "$issues" > "$CACHE_FILE"
-    cat "$CACHE_FILE"
+    [ -f "$CACHE_FILE" ] && cat "$CACHE_FILE"
 }
 
 _zsh_jira_checkout_branch_add_jira_titles() {
