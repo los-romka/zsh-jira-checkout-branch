@@ -9,7 +9,7 @@ _zsh_jira_checkout_branch_init() {
 
     [ "$(git symbolic-ref --short HEAD)" ] || return $ERROR_CODE
 
-    GIT_REPOSITORY_HASH=$(git remote -v | shasum -p | cut -d' ' -f1)
+    GIT_REPOSITORY_HASH=$(git remote -v | (shasum -p 2>/dev/null || shasum) | cut -d' ' -f1)
 
     _JIRA_ISSUES_CACHE_PATH=/tmp/.jira_issues.$GIT_REPOSITORY_HASH.cache
     _JIRA_ISSUES_CACHE_TTL=60
